@@ -70,12 +70,6 @@ float land_height = 50;
 float tank_width = 20;
 float tank_height = 10;
 
-//tank position
-tank1.x = land_width / 2;
-tank1.y = land_height;
-tank2.x = width - (land_width / 2) - 8 - bullet1.x;
-tank2.y = land_height;
-
 //powergauge
 float p1gauge_posx = tank1.x;
 float p2gauge_posx = tank2.x;
@@ -461,7 +455,18 @@ int main(int argc, char** argv)
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 	glutInitWindowSize(width, height);
 	glutCreateWindow("Le GunBound");
-
+	//add values to vectors
+	//tank position
+	tank1.x = land_width / 2;
+	tank1.y = land_height;
+	tank2.x = width - (land_width / 2) - 8 - bullet1.x;
+	tank2.y = land_height;
+	//bullet positions
+	bullet1.x = tank1.x + tank_width / 2;
+	bullet1.y = tank1.y + (tank_height + 5);
+	bullet2.x = tank2.x + tank_width / 2;
+	bullet2.y = tank2.y + (tank_height + 5);
+	
 	//uses the void functions
 	glutDisplayFunc(draw);
 	glutTimerFunc(refresh, update, 0);
