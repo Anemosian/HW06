@@ -38,7 +38,13 @@ class vec2
 {
 	float x, y;
 	public:
-	vec2 vecSum(vec2, vec2);
+	vec2 vecSum(vec2, vec2)
+	{
+  		vec2 sum;
+  		sum.x = a.x + b.x;
+		sum.y = a.y + b.y;
+		return sum;
+	}
 	int dot(vec2 a, b)
 	{
 		int dprod = (a.x*b.x)+(a.y*b.y); 
@@ -46,11 +52,7 @@ class vec2
 	}
 };
 
-vec2 vec2:: vecSum(vec2 a, vec2 b) {
-  vec2 sum;
-  sum.x = a.x + b.x;
-  sum.y = a.y + b.y;
-};
+vec2 vec2:: vecSum(vec2 a, vec2 b) 
 
 class player
 {
