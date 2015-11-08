@@ -38,21 +38,19 @@ class vec2
 {
 	float x, y;
 	public:
-	vec2 vecSum(vec2, vec2)
+	vec2 vecSum(vec2 a, vec2 b)
 	{
-  		vec2 sum;
-  		sum.x = a.x + b.x;
+		vec2 sum;
+		sum.x = a.x + b.x;
 		sum.y = a.y + b.y;
 		return sum;
 	}
-	int dot(vec2 a, b)
+	int dot(vec2 a, vec2 b)
 	{
 		int dprod = (a.x*b.x)+(a.y*b.y); 
 		return dprod;
 	}
 };
-
-vec2 vec2:: vecSum(vec2 a, vec2 b) 
 
 class player
 {
@@ -69,7 +67,7 @@ float land_width = 100;
 float land_height = 50;
 
 //tank specs
-float bullet1.x = 20;
+float tank_width = 20;
 float tank_height = 10;
 
 //tank position
@@ -98,10 +96,10 @@ int p2life = 5;
 //bullet
 float theta1;
 float theta2;
-float bullet1.x = tank1.x + bullet1.x/2;
-float bullet1.y = tank1.y + (tank_height + 5);
-float bullet2.x = tank2.x + bullet1.x / 2;
-float bullet2.y = tank2.y + (tank_height + 5);
+bullet1.x = tank1.x + tank_width/2;
+bullet1.y = tank1.y + (tank_height + 5);
+bullet2.x = tank2.x + tank_width / 2;
+bullet2.y = tank2.y + (tank_height + 5);
 float bulletSize = 5; //radius
 int bullet_segments = 8;
 float windVelocity = 0;
@@ -178,14 +176,14 @@ void keyboard() {
 		{
 			p1fire = true;
 			gameStart = true;
-			bullet2.x = tank2.x + bullet1.x/2;
+			bullet2.x = tank2.x + tank_width / 2;
 			bullet2.y = tank2.y + (tank_height + 5);
 			velocity2.x = 0;
 			velocity2.y= 0;
 			storewind2 = 0;
 			storewind1 = windVelocity;
-			bullet1.x = tank1.x + (bullet1.x / 2);
-			bullet1.y = tank1.y + (bullet1.x +5);
+			bullet1.x = tank1.x + (tank_width / 2);
+			bullet1.y = tank1.y + (tank_width +5);
 			velocity1.x = gauge1_height / 5;
 			velocity1.y = gauge1_height / 5;
 			theta1 = (3.1415926 / 180) * rotAngle1;
@@ -228,16 +226,16 @@ void keyboard() {
 		{
 			gameStart = true;
 			p2fire = true;
-			bullet1.x = tank1.x + bullet1.x/2;
+			bullet1.x = tank1.x + tank_width/2;
 			bullet1.y = tank1.y + (tank_height + 5);
-			velocityX1 = 0;
-			velocityY1 = 0;
+			velocity1.x = 0;
+			velocity1.y = 0;
 			storewind1 = 0;
 			storewind2 = windVelocity;
-			bullet2.x = tank2.x + (bullet1.x / 2);
-			bullet2.y = tank2.y + (bullet1.x / 2);
-			velocityX2 = gauge2_height / 5;
-			velocityY2 = gauge2_height / 5;
+			bullet2.x = tank2.x + (tank_width / 2);
+			bullet2.y = tank2.y + (tank_width / 2);
+			velocity2.x = gauge2_height / 5;
+			velocity2.y = gauge2_height / 5;
 			theta2 = (3.1415926 / 180) * (rotAngle2 - 180);
 		}
 	}
@@ -321,7 +319,7 @@ void boom()
 {
 	if (player2 == false)
 	{
-		bullet1.x = tank1.x + (bullet1.x / 2);
+		bullet1.x = tank1.x + (tank_width / 2);
 		bullet1.y = tank1.y + (tank_height / 2);
 		windVelocity = steprand();
 		player2 = true;
@@ -329,7 +327,7 @@ void boom()
 	}
 	else if (player2 == true)
 	{
-		bullet2.x = tank2.x + (bullet1.x / 2);
+		bullet2.x = tank2.x + (tank_width / 2);
 		bullet2.y = tank2.y + (tank_height / 2);
 		windVelocity = steprand();
 		player2 = false;
@@ -356,7 +354,7 @@ void collisionChecker() {
 
 	//tank collision
 	if ((bullet2.x >= tank1.x) &&
-		(bullet2.x <= tank1.x + bullet1.x) &&
+		(bullet2.x <= tank1.x + tank_width) &&
 		(bullet2.y <= tank1.y + tank_height) &&
 		(bullet2.y >= tank1.y))
 	{
@@ -367,7 +365,7 @@ void collisionChecker() {
 		boom();
 	}
 	if ((bullet1.x >= tank2.x) &&
-		(bullet1.x <= tank2.x + bullet1.x) &&
+		(bullet1.x <= tank2.x + tank_width) &&
 		(bullet1.y <= tank2.y + tank_height) &&
 		(bullet1.y >= tank2.y))
 	{
@@ -385,16 +383,16 @@ void bulletMove()
 	{
 		if (player2 == false)
 		{
-			bullet1.x += velocityX1*cos(theta1)*ts + storewind2;
-			bullet1.y += velocityY1*sin(theta1)*ts - ((ts*ts*9.8)/2);
+			bullet1.x += velocity1.x*cos(theta1)*ts + storewind2;
+			bullet1.y += velocity1.y*sin(theta1)*ts - ((ts*ts*9.8)/2);
 			collisionChecker();
 			ts += 1/600;
 		}
 
 		else if (player2 == true)
 		{
-			bullet2.x += velocityX2*cos(theta2)*ts + storewind2;
-			bullet2.y += velocityY2*sin(theta2)*ts - ((ts*ts*9.8)/2);
+			bullet2.x += velocity2.x*cos(theta2)*ts + storewind2;
+			bullet2.y += velocity2.y*sin(theta2)*ts - ((ts*ts*9.8)/2);
 			collisionChecker();
 			ts += 1/600;
 		}		
@@ -422,16 +420,16 @@ void draw() {
 	boxDraw(width - land_width - 8, 0, land_width, land_height);
 
 	//tank draw
-	boxDraw(tank1.x, tank1.y, bullet1.x, tank_height);
-	boxDraw(tank2.x, tank2.y, bullet1.x, tank_height);
+	boxDraw(tank1.x, tank1.y, tank_width, tank_height);
+	boxDraw(tank2.x, tank2.y, tank_width, tank_height);
 
 	//gauge draw
 	boxDraw(p1gauge_posx, gauge_posy, gauge_width, gauge1_height);
 	boxDraw(p2gauge_posx, gauge_posy, gauge_width, gauge2_height);
 
 	//line
-	lineDraw((tank1.x + (bullet1.x/2)), (tank1.y + (tank_height/2)), (tank1.x + 50), (tank1.y + (tank_height / 2)));
-	line2Draw((tank2.x + (bullet1.x/2)), (tank2.y + (tank_height / 2)), (tank2.x - 30), (tank2.y + (tank_height / 2)));
+	lineDraw((tank1.x + (tank_width/2)), (tank1.y + (tank_height/2)), (tank1.x + 50), (tank1.y + (tank_height / 2)));
+	line2Draw((tank2.x + (tank_width/2)), (tank2.y + (tank_height / 2)), (tank2.x - 30), (tank2.y + (tank_height / 2)));
 
 
 	//score display
