@@ -36,8 +36,8 @@ int refresh = 1000 / 60;
 //classes
 class vec2
 {
-	float x, y;
 	public:
+	float x, y;
 	vec2 vecSum(vec2 a, vec2 b)
 	{
 		vec2 sum;
@@ -90,10 +90,6 @@ int p2life = 5;
 //bullet
 float theta1;
 float theta2;
-bullet1.x = tank1.x + tank_width/2;
-bullet1.y = tank1.y + (tank_height + 5);
-bullet2.x = tank2.x + tank_width / 2;
-bullet2.y = tank2.y + (tank_height + 5);
 float bulletSize = 5; //radius
 int bullet_segments = 8;
 float windVelocity = 0;
