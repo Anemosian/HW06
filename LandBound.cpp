@@ -36,7 +36,7 @@ int refresh = 1000 / 60;
 //classes
 class vec2
 {
-	public:
+public:
 	float x, y;
 	vec2 vecSum(vec2 a, vec2 b)
 	{
@@ -47,7 +47,7 @@ class vec2
 	}
 	int dot(vec2 a, vec2 b)
 	{
-		int dprod = (a.x*b.x)+(a.y*b.y); 
+		int dprod = (a.x*b.x) + (a.y*b.y);
 		return dprod;
 	}
 };
@@ -60,7 +60,7 @@ class player
 };
 
 // vectors
-vec2 bullet1, bullet2, tank1, tank2,velocity1, velocity2, accel1, accel2;
+vec2 bullet1, bullet2, tank1, tank2, velocity1, velocity2, accel1, accel2;
 
 //land specs
 float land_width = 100;
@@ -164,17 +164,17 @@ void keyboard() {
 		}
 		if (GetAsyncKeyState(VK_F))
 		{
-			ts += 60/1000;
+			ts += 60 / 1000;
 			p1fire = true;
 			gameStart = true;
 			bullet2.x = tank2.x + tank_width / 2;
 			bullet2.y = tank2.y + (tank_height + 5);
 			velocity2.x = 0;
-			velocity2.y= 0;
+			velocity2.y = 0;
 			storewind2 = 0;
 			storewind1 = windVelocity;
 			bullet1.x = tank1.x + (tank_width / 2);
-			bullet1.y = tank1.y + (tank_height +5);
+			bullet1.y = tank1.y + (tank_height + 5);
 			accel1.x = gauge1_height / 5;
 			accel1.y = gauge1_height / 5;
 			theta1 = (3.1415926 / 180) * rotAngle1;
@@ -215,10 +215,10 @@ void keyboard() {
 		}
 		if (GetAsyncKeyState(VK_L))
 		{
-			ts += 60/1000;
+			ts += 60 / 1000;
 			gameStart = true;
 			p2fire = true;
-			bullet1.x = tank1.x + tank_width/2;
+			bullet1.x = tank1.x + tank_width / 2;
 			bullet1.y = tank1.y + (tank_height + 5);
 			velocity1.x = 0;
 			velocity1.y = 0;
@@ -316,7 +316,7 @@ void boom()
 		bullet1.y = tank1.y + (tank_height / 2);
 		windVelocity = steprand();
 		player2 = true;
-	
+
 	}
 	else if (player2 == true)
 	{
@@ -324,7 +324,7 @@ void boom()
 		bullet2.y = tank2.y + (tank_height / 2);
 		windVelocity = steprand();
 		player2 = false;
-	
+
 	}
 }
 
@@ -374,13 +374,14 @@ void bulletMove()
 {
 	if (player2 == false)
 	{
+	
 		velocity1.x += accel1.x*ts;
 		velocity1.y += accel1.y*ts;
-		bullet1.x += (velocity1.x * ts)+((accel1.x + storewind1)*(ts*ts))/2;
+		bullet1.x += (velocity1.x * ts) + ((accel1.x + storewind1)*(ts*ts)) / 2;
 		bullet1.y += (velocity1.y * ts) + ((accel1.y - 9.8)*(ts*ts)) / 2;
-		ts+= 60/1000;
+		ts += 60 / 1000;
 		collisionChecker();
-			
+
 	}
 	else if (player2 == true)
 	{
@@ -388,7 +389,7 @@ void bulletMove()
 		velocity2.y += accel2.y*ts;
 		bullet2.x += (velocity2.x * ts) + ((accel2.x + storewind2)*(ts*ts)) / 2;
 		bullet2.y += (velocity2.y * ts) + ((accel2.y - 9.8)*(ts*ts)) / 2;
-		ts+= 60/1000;
+		ts += 60 / 1000;
 		collisionChecker();
 	}
 }
@@ -418,12 +419,12 @@ void draw() {
 	boxDraw(tank2.x, tank2.y, tank_width, tank_height);
 
 	//gauge draw
-	boxDraw(p1gauge_posx, gauge_posy, gauge_width, gauge1_height);
-	boxDraw(p2gauge_posx, gauge_posy, gauge_width, gauge2_height);
+	boxDraw(tank1.x, gauge_posy, gauge_width, gauge1_height);
+	boxDraw(tank2.x, gauge_posy, gauge_width, gauge2_height);
 
 	//line
-	lineDraw((tank1.x + (tank_width/2)), (tank1.y + (tank_height/2)), (tank1.x + 50), (tank1.y + (tank_height / 2)));
-	line2Draw((tank2.x + (tank_width/2)), (tank2.y + (tank_height / 2)), (tank2.x - 30), (tank2.y + (tank_height / 2)));
+	lineDraw((tank1.x + (tank_width / 2)), (tank1.y + (tank_height / 2)), (tank1.x + 50), (tank1.y + (tank_height / 2)));
+	line2Draw((tank2.x + (tank_width / 2)), (tank2.y + (tank_height / 2)), (tank2.x - 30), (tank2.y + (tank_height / 2)));
 
 
 	//score display
@@ -459,14 +460,14 @@ int main(int argc, char** argv)
 	//tank position
 	tank1.x = land_width / 2;
 	tank1.y = land_height;
-	tank2.x = width - (land_width / 2) - 8 - tank_width;
+	tank2.x = width - (land_width / 2) - 8 - bullet1.x;
 	tank2.y = land_height;
-	if(gameStart == false){
-	//bullet positions
-	bullet1.x = tank1.x + tank_width / 2;
-	bullet1.y = tank1.y + (tank_height + 5);
-	bullet2.x = tank2.x + tank_width / 2;
-	bullet2.y = tank2.y + (tank_height + 5);
+	if (gameStart == false) {
+		//bullet positions
+		bullet1.x = tank1.x + tank_width / 2;
+		bullet1.y = tank1.y + (tank_height + 5);
+		bullet2.x = tank2.x + tank_width / 2;
+		bullet2.y = tank2.y + (tank_height + 5);
 	}
 	//uses the void functions
 	glutDisplayFunc(draw);
