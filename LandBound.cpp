@@ -174,7 +174,7 @@ void keyboard() {
 			storewind2 = 0;
 			storewind1 = windVelocity;
 			bullet1.x = tank1.x + (tank_width / 2);
-			bullet1.y = tank1.y + (tank_width +5);
+			bullet1.y = tank1.y + (tank_height +5);
 			accel1.x = gauge1_height / 5;
 			accel1.y = gauge1_height / 5;
 			theta1 = (3.1415926 / 180) * rotAngle1;
@@ -225,7 +225,7 @@ void keyboard() {
 			storewind1 = 0;
 			storewind2 = windVelocity;
 			bullet2.x = tank2.x + (tank_width / 2);
-			bullet2.y = tank2.y + (tank_width / 2);
+			bullet2.y = tank2.y + (tank_height / 2);
 			accel2.x = gauge2_height / 5;
 			accel2.y = gauge2_height / 5;
 			theta2 = (3.1415926 / 180) * (rotAngle2 - 180);
@@ -462,12 +462,13 @@ int main(int argc, char** argv)
 	tank1.y = land_height;
 	tank2.x = width - (land_width / 2) - 8 - bullet1.x;
 	tank2.y = land_height;
+	if(gameStart == false){
 	//bullet positions
 	bullet1.x = tank1.x + tank_width / 2;
 	bullet1.y = tank1.y + (tank_height + 5);
 	bullet2.x = tank2.x + tank_width / 2;
 	bullet2.y = tank2.y + (tank_height + 5);
-	
+	}
 	//uses the void functions
 	glutDisplayFunc(draw);
 	glutTimerFunc(refresh, update, 0);
