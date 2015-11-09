@@ -459,7 +459,7 @@ int main(int argc, char** argv)
 	//tank position
 	tank1.x = land_width / 2;
 	tank1.y = land_height;
-	tank2.x = width - (land_width / 2) - 8 - bullet1.x;
+	tank2.x = width - (land_width / 2) - 8 - tank_width;
 	tank2.y = land_height;
 	if(gameStart == false){
 	//bullet positions
