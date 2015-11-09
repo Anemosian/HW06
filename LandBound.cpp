@@ -378,6 +378,7 @@ void bulletMove()
 		velocity1.y += accel1.y*ts;
 		bullet1.x += (velocity1.x * ts)+((accel1.x + storewind1)*(ts*ts))/2;
 		bullet1.y += (velocity1.y * ts) + ((accel1.y - 9.8)*(ts*ts)) / 2;
+		ts+= 60/1000;
 		collisionChecker();
 			
 	}
@@ -387,6 +388,7 @@ void bulletMove()
 		velocity2.y += accel2.y*ts;
 		bullet2.x += (velocity2.x * ts) + ((accel2.x + storewind2)*(ts*ts)) / 2;
 		bullet2.y += (velocity2.y * ts) + ((accel2.y - 9.8)*(ts*ts)) / 2;
+		ts+= 60/1000;
 		collisionChecker();
 	}
 }
