@@ -372,25 +372,22 @@ void collisionChecker() {
 
 void bulletMove()
 {
-	if (gameStart == true)
+	if (player2 == false)
 	{
-		if (player2 == false)
-		{
-			velocity1.x += accel1.x*ts
-			velocity1.y += accel1.y*ts
-			bullet1.x += velocity1.x*cos(theta1)*ts + storewind1;
-			bullet1.y += velocity1.y*sin(theta1)*ts - ((ts*ts*9.8)/2);
-			collisionChecker();
-			ts += 1/600;
-		}
-
-		else if (player2 == true)
-		{
-			bullet2.x += velocity2.x*cos(theta2)*ts + storewind2;
-			bullet2.y += velocity2.y*sin(theta2)*ts - ((ts*ts*9.8)/2);
-			collisionChecker();
-			ts += 1/600;
-		}		
+		velocity1.x += accel1.x*ts;
+		velocity1.y += accel1.y*ts;
+		bullet1.x += (velocity1.x * ts)+((accel1.x + storewind1)*(ts*ts))/2;
+		bullet1.y += (velocity1.y * ts) + ((accel1.y - 9.8)*(ts*ts)) / 2;
+		collisionChecker();
+			
+	}
+	else if (player2 == true)
+	{
+		velocity2.x += accel2.x*ts;
+		velocity2.y += accel2.y*ts;
+		bullet2.x += (velocity2.x * ts) + ((accel2.x + storewind2)*(ts*ts)) / 2;
+		bullet2.y += (velocity2.y * ts) + ((accel2.y - 9.8)*(ts*ts)) / 2;
+		collisionChecker();
 	}
 }
 
