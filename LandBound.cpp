@@ -16,6 +16,9 @@
 
 using namespace std;
 
+typedef enum { analytical, numerical} integrationMode;
+integrationMode integrateMode = numerical;
+
 random_device ran;
 mt19937 dev(ran());
 mt19937 gen(ran());
@@ -71,9 +74,6 @@ float tank_width = 20;
 float tank_height = 10;
 
 //powergauge
-float p1gauge_posx = tank1.x;
-float p2gauge_posx = tank2.x;
-
 float gauge_posy = land_height * 3;
 
 float gauge1_height = 1;
@@ -105,7 +105,11 @@ bool p2fire = false;
 
 static float rotAngle1 = 0.0;
 static float rotAngle2 = 360.0;
+static float g = -9.8;
+static float a = 5;
 
+float startTime;
+const int milli = 1000;
 
 //function functions
 
@@ -164,9 +168,11 @@ void keyboard() {
 		}
 		if (GetAsyncKeyState(VK_F))
 		{
-			ts += 60 / 1000;
+			accel1.x = gauge1_height / 5;
+			accel1.y = gauge1_height / 5;
 			p1fire = true;
-			gameStart = true;
+			
+			
 			bullet2.x = tank2.x + tank_width / 2;
 			bullet2.y = tank2.y + (tank_height + 5);
 			velocity2.x = 0;
@@ -175,9 +181,8 @@ void keyboard() {
 			storewind1 = windVelocity;
 			bullet1.x = tank1.x + (tank_width / 2);
 			bullet1.y = tank1.y + (tank_height + 5);
-			accel1.x = gauge1_height / 5;
-			accel1.y = gauge1_height / 5;
 			theta1 = (3.1415926 / 180) * rotAngle1;
+			
 		}
 	}
 	if (player2 == true && p2fire == false)
@@ -215,9 +220,10 @@ void keyboard() {
 		}
 		if (GetAsyncKeyState(VK_L))
 		{
-			ts += 60 / 1000;
-			gameStart = true;
+			accel2.x = gauge2_height / 5 + windVelocity;
+			accel2.y = gauge2_height / 5 + g;
 			p2fire = true;
+		
 			bullet1.x = tank1.x + tank_width / 2;
 			bullet1.y = tank1.y + (tank_height + 5);
 			velocity1.x = 0;
@@ -226,9 +232,8 @@ void keyboard() {
 			storewind2 = windVelocity;
 			bullet2.x = tank2.x + (tank_width / 2);
 			bullet2.y = tank2.y + (tank_height / 2);
-			accel2.x = gauge2_height / 5;
-			accel2.y = gauge2_height / 5;
 			theta2 = (3.1415926 / 180) * (rotAngle2 - 180);
+			
 		}
 	}
 }
@@ -307,14 +312,15 @@ void ballDraw(float cx, float cy, float r, int segments) {
 	glEnd();
 }
 
+//event check and cleanup
 void boom()
 {
-	ts = 0;
 	if (player2 == false)
 	{
 		bullet1.x = tank1.x + (tank_width / 2);
 		bullet1.y = tank1.y + (tank_height / 2);
 		windVelocity = steprand();
+		p1fire = false;
 		player2 = true;
 
 	}
@@ -323,11 +329,13 @@ void boom()
 		bullet2.x = tank2.x + (tank_width / 2);
 		bullet2.y = tank2.y + (tank_height / 2);
 		windVelocity = steprand();
+		p2fire = false; 
 		player2 = false;
 
 	}
 }
 
+//collision check
 void collisionChecker() {
 	//left wall collision
 	if ((bullet1.x < 0) || (bullet2.x < 0)) {
@@ -370,30 +378,90 @@ void collisionChecker() {
 	}
 }
 
-void bulletMove()
+void updateProjectileStateAnalytical(float t) {
+
+	bullet1.x = velocity1.x * t + cos(rotAngle1);
+	bullet1.y = t * (0.5 * g * t + velocity1.y) + sin(rotAngle1);
+}
+
+void updateProjectileStateNumerical(float t, float dt) {
+	/*
+	//euler
+	//pos
+	bullet1.x += bullet1.x * dt + cos(rotAngle1);
+	bullet1.y += bullet1.y * dt - sin(rotAngle1);
+
+	//vel
+	velocity1.y += g * dt;
+	*/
+
+	float prevtime = t;
+	float prevdt = dt;
+
+	//time corrected verlet
+	if (p1fire == true) {
+		float prevposx1 = bullet1.x;
+		float prevposy1 = bullet1.y;
+
+		//bullet1.x += bullet1.x * dt + ((gauge1_height / 10) + windVelocity) * 0.5;
+		bullet1.y += bullet1.y * dt + dt * dt * g * 0.5;
+		bullet1.x += (bullet1.x + (bullet1.x - prevposx1)*(dt / prevdt) + ((gauge1_height / 10) + windVelocity) * 0.5);
+		//bullet1.y += (bullet1.y + (bullet1.y - prevposy1)*(dt / prevdt) + accel1.y * dt * dt);
+	}
+	
+	if (p2fire == true) {
+		float prevposx2 = bullet2.x;
+		float prevposy2 = bullet2.y;
+
+		bullet2.x -= bullet2.x * dt + ((gauge2_height / 10) + windVelocity) * 0.5;
+		bullet2.y -= bullet2.y * dt + dt * dt * g * 0.5;
+		//bullet2.x += bullet2.x + (bullet2.x - prevposx2)*(dt / prevdt) + accel2.x * dt * dt;
+		//bullet2.y += bullet2.y + (bullet2.y - prevposy2)*(dt / prevdt) + accel2.y * dt * dt;
+	}
+}
+
+void updateProjectileState(float t, float dt) {
+	if (integrateMode == analytical) {
+		updateProjectileStateAnalytical(t);
+	}
+	else {
+		updateProjectileStateNumerical(t, dt);
+	}
+}
+
+void bulletMove(float t, float dt)
 {
 	if (player2 == false)
 	{
-	
+		if (p1fire == true) {
+			updateProjectileState(t, dt);
+			collisionChecker();
+		}
+		/*
 		velocity1.x += accel1.x*ts;
 		velocity1.y += accel1.y*ts;
 		bullet1.x += (velocity1.x * ts) + ((accel1.x + storewind1)*(ts*ts)) / 2;
 		bullet1.y += (velocity1.y * ts) + ((accel1.y - 9.8)*(ts*ts)) / 2;
 		ts += 60 / 1000;
-		collisionChecker();
-
+		*/
+		
 	}
 	else if (player2 == true)
 	{
+		if (p2fire == true) {
+			updateProjectileState(t, dt);
+			collisionChecker();
+		}
+		/*
 		velocity2.x += accel2.x*ts;
 		velocity2.y += accel2.y*ts;
 		bullet2.x += (velocity2.x * ts) + ((accel2.x + storewind2)*(ts*ts)) / 2;
 		bullet2.y += (velocity2.y * ts) + ((accel2.y - 9.8)*(ts*ts)) / 2;
 		ts += 60 / 1000;
 		collisionChecker();
+		*/
 	}
 }
-
 
 
 //draw on screen
@@ -435,15 +503,24 @@ void draw() {
 }
 
 //screen update handler
-void update(int upvalue) {
+void update(void) {
 	//input
 	keyboard();
 
-	bulletMove();
+	//timer?
+	static float prevTime = -1;
+	float t, dt;
 
+	t = glutGet(GLUT_ELAPSED_TIME) / (float)milli - startTime;
 
-	//calls update in millisecs
-	glutTimerFunc(refresh, update, 0);
+	if (prevTime < 0.0) {
+		prevTime = t;
+		return;
+	}
+
+	dt = t - prevTime;
+	bulletMove(t, dt);
+	prevTime = t;
 
 	//Redisplay Frame
 	glutPostRedisplay();
@@ -460,7 +537,7 @@ int main(int argc, char** argv)
 	//tank position
 	tank1.x = land_width / 2;
 	tank1.y = land_height;
-	tank2.x = width - (land_width / 2) - 8 - tank_width;
+	tank2.x = width - (land_width / 2) - 8 - bullet1.x;
 	tank2.y = land_height;
 	if (gameStart == false) {
 		//bullet positions
@@ -471,11 +548,13 @@ int main(int argc, char** argv)
 	}
 	//uses the void functions
 	glutDisplayFunc(draw);
-	glutTimerFunc(refresh, update, 0);
-
+	
 	//setup the 2d and set draw color to black
 	use2D(width, height);
 	glColor3f(1.0f, 1.0f, 1.0f);
+
+	//refresh rate
+	glutIdleFunc(update);
 
 	//program loop
 	glutMainLoop();
